@@ -1,0 +1,71 @@
+package taggit_pb;
+
+message UserTagItem {
+	optional int64 user_id = 1;
+	optional int64 tag_id = 2;
+	optional int64 item_id = 3;
+}
+
+message User {
+	optional int64 id = 1;
+	optional string name = 2;
+	optional string passwd = 3;
+	optional string cookie = 4;
+
+	optional int64 hits = 100;
+	repeated UserTagItem rels = 101;
+}
+
+message Tag {
+	optional int64 id = 1;
+	optional string name = 2;
+
+	optional string lastmod_when = 96;
+	optional string lastmod_by = 97;
+	optional string add_when = 98;
+	optional string add_by = 99;
+	optional int64 hits = 100;
+	repeated UserTagItem rels = 101;
+}
+
+// Bibtex fields
+message Item {
+	optional int64 id = 1;
+	optional string name = 2; // abrev, filename, ...
+
+	optional string title = 4;
+	optional string author = 5;
+	optional string year = 6;
+	optional string url = 7;
+
+	optional string type = 89; // article, book, ..
+	optional string bibtex = 90; // format
+
+	optional string lastmod_when = 96;
+	optional string lastmod_by = 97;
+	optional string add_when = 98;
+	optional string add_by = 99;
+	optional int64 hits = 100;
+	repeated UserTagItem rels = 101;
+}
+
+message VList {
+	repeated User users = 1;
+	repeated Tag  tags  = 2;
+	repeated Item items = 3;
+}
+
+message JsonRequest {
+	optional VList input = 1;
+}
+
+message JsonResponse {
+	optional VList output = 1;
+	enum Status {
+	     UNKNOWN = 0;
+	     OK = 1;
+	     ERR = 2;
+	}
+	optional Status status = 2 [default = UNKNOWN];	
+	optional string message = 3;
+}
