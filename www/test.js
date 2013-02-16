@@ -1,4 +1,4 @@
-var IP = "http://127.0.0.1:8080"
+var IP = "http://taggit.cc:8080"
 var TEST_ID = ""
 
 // File API support.
