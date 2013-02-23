@@ -1,5 +1,6 @@
-import time
-import random
+#import time
+#import random
+import sqlite3
 
 ###############################################################################
 # primitives
@@ -13,9 +14,50 @@ class db_taggit:
                                 cls, *args, **kwargs)
         return cls._instance
 
-    # API
-    # return new user id
-    def addUser(self, user_dict): pass
+    def __init__(self,sqlpath):
+        self.sql3 = sqlite3.connect(sqlpath)
+
+    def __del__(self):
+        self.sql3.close()
+
+    def execsql(self,sqlfile):
+        c = self.sql3.cursor()
+        try:
+            with open(sqlfile) as f:
+                c.executescript(f.read())
+                self.sql3.commit()
+        except Exception, err:
+            print 'db_taggit execute:', err
+        c.close()
+
+    # signup: add new user
+    # input: user name
+    # output: user id
+    def addUser(self, user_name): 
+        sql = '''INSERT INTO User(name) VALUES(''' +\
+            '"' + user_name + '"' + ''');'''
+        c = self.sql3.cursor()
+        c.execute(sql)
+        self.sql3.commit()
+        user_id = c.lastrowid
+        c.close()
+        return user_id
+
+    # login: add new user
+    # input: user name
+    # output: user id        
+    def loginUser(self, user_name):
+        sql = '''SELECT id from User where name = ''' +\
+            '"' + user_name + + '"' + ''');'''
+        c = self.sql3.cursor()
+        c.execute(sql)
+        self.sql3.commit()
+        results = c.fetchall()
+        c.close()
+        print results
+        return resutls[0]
+
+'''
     # return new tag id
     def addTag (self, tag_dict, user_id): pass
     # return new item id
@@ -23,18 +65,20 @@ class db_taggit:
     def addItemByBibtex(self, bibtex_dict, user_id): pass
     # return OK/ERR?
     def tagItem(self, user_id, tag_id, item_id): pass
+'''
 
-ITEM_DB_MAP = {
-    '__bibtex':'bibtex',
-    '_type':'type',
-    'author':'author',
-    'year':'year',
-    'url':'url'
-}
+#ITEM_DB_MAP = {
+#    '__bibtex':'bibtex',
+#    '_type':'type',
+#    'author':'author',
+#    'year':'year',
+#    'url':'url'
+#}
 
 ###############################################################################
 # cassandra
 ###############################################################################
+'''
 import pycassa
 from pycassa.pool import ConnectionPool
 from pycassa import NotFoundException
@@ -191,10 +235,15 @@ class db_cassandra(db_taggit):
 
             sleep(0.005)
 
+'''
 
 ###############################################################################
 # Factory
 ###############################################################################
-def db_default():
-    return db_cassandra(['128.122.47.240:9160'])
-
+def db_factory(mode):
+    if mode == "debug":
+        sql3_db = '../db/test.db'
+        dbo = db_taggit(sql3_db) 
+        dbo.execsql('../db/deldb.sql3')
+        dbo.execsql('../db/newdb.sql3')
+    return dbo

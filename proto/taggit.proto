@@ -1,71 +1,56 @@
 package taggit_pb;
 
-message UserTagItem {
-	optional int64 user_id = 1;
-	optional int64 tag_id = 2;
-	optional int64 item_id = 3;
-}
-
 message User {
-	optional int64 id = 1;
-	optional string name = 2;
-	optional string passwd = 3;
-	optional string cookie = 4;
-
-	optional int64 hits = 100;
-	repeated UserTagItem rels = 101;
+       optional int32 id = 1;
+       optional string name = 2;
 }
 
 message Tag {
-	optional int64 id = 1;
-	optional string name = 2;
-
-	optional string lastmod_when = 96;
-	optional string lastmod_by = 97;
-	optional string add_when = 98;
-	optional string add_by = 99;
-	optional int64 hits = 100;
-	repeated UserTagItem rels = 101;
+       optional int32 id = 1;
+       optional string name = 2;
 }
 
-// Bibtex fields
 message Item {
-	optional int64 id = 1;
-	optional string name = 2; // abrev, filename, ...
-
-	optional string title = 4;
-	optional string author = 5;
-	optional string year = 6;
-	optional string url = 7;
-
-	optional string type = 89; // article, book, ..
-	optional string bibtex = 90; // format
-
-	optional string lastmod_when = 96;
-	optional string lastmod_by = 97;
-	optional string add_when = 98;
-	optional string add_by = 99;
-	optional int64 hits = 100;
-	repeated UserTagItem rels = 101;
+	optional int32 id = 1;
+	optional string value = 2;
+	extensions 100 to max;
 }
 
-message VList {
+message Paper {
+	extend Item {
+               optional Paper paper = 101;
+	}  
+	optional string title = 1;
+	optional string author = 2;
+	optional string year = 3;
+	optional string url = 4;
+	optional string lastmod = 5;
+}
+
+message UserTagItem {
+	optional int32 user_id = 1;
+	optional int32 tag_id = 2;
+	optional int32 item_id = 3;
+}
+
+message VLists {
 	repeated User users = 1;
 	repeated Tag  tags  = 2;
 	repeated Item items = 3;
+	repeated UserTagItem utis = 4;
+	repeated Paper papers= 5;   
+
+	optional string query = 11;
+	optional int32 query_offset = 12 [default = 0];
+	optional int32 query_size = 13 [default = 0];
+	
+        optional string status = 101;
 }
 
 message JsonRequest {
-	optional VList input = 1;
+	optional VLists input = 1;
 }
 
 message JsonResponse {
-	optional VList output = 1;
-	enum Status {
-	     UNKNOWN = 0;
-	     OK = 1;
-	     ERR = 2;
-	}
-	optional Status status = 2 [default = UNKNOWN];	
-	optional string message = 3;
+	optional VLists output = 1;
 }

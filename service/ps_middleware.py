@@ -5,14 +5,14 @@ import json
 #from simplejson import loads, dumps
 import taggit_pb2 as taggit_pb 
 
-OK = taggit_pb.JsonResponse.DESCRIPTOR.\
-    enum_types_by_name['Status'].values_by_name['OK'].number
-ERR = taggit_pb.JsonResponse.DESCRIPTOR.\
-    enum_types_by_name['Status'].values_by_name['ERR'].number
-UNO = taggit_pb.JsonResponse.DESCRIPTOR.\
-    enum_types_by_name['Status'].values_by_name['UNKNOWN'].number
+#OK = taggit_pb.VLists.DESCRIPTOR.\
+#    enum_types_by_name['Status'].values_by_name['OK'].number
+#ERR = taggit_pb.VLists.DESCRIPTOR.\
+#    enum_types_by_name['Status'].values_by_name['ERR'].number
+#UNO = taggit_pb.VLists.DESCRIPTOR.\
+#    enum_types_by_name['Status'].values_by_name['UNKNOWN'].number
 
-from ps_database import db_default
+from ps_database import db_factory
 
 import protobuf_json
 
@@ -21,33 +21,39 @@ import protobuf_json
 #   environ['_HANDLER'] must be set !
 ###############################################################################
 class JsonApp(object):
-    def __init__(self):
-        self.dbo = db_default()
+    def __init__(self,mode):
+        self.dbo = db_factory(mode)
+        self.mode = mode
+
     # http -> webob, json -> dict
     def __call__(self, environ, start_response):
         req = Request(environ)
         resp = Response(content_type="application/json")
-        resp.dict = {'status':UNO}
+        resp.dict = {}
         try:
             req.dict = json.loads(req.body)
-            protobuf_json.json2pb(taggit_pb.JsonRequest(), req.dict) # DEBUG
+            if self.mode == "debug":
+                protobuf_json.json2pb(taggit_pb.JsonRequest(), req.dict)
             handler = getattr(self,environ['_HANDLER'])
             handler(req,resp) # handle !
-            protobuf_json.json2pb(taggit_pb.JsonResponse(), resp.dict) # DEBUG
-            resp.dict['status'] = OK
+            if self.mode == "debug":
+                protobuf_json.json2pb(taggit_pb.JsonResponse(), resp.dict)
+            #resp.dict['status'] = OK
         except Exception, e:
-            #print 'exception:', e
-            resp.dict['message'] = str(e)
-            resp.dict['status'] = ERR
+            print 'exception:', e
+            #resp.dict['message'] = str(e)
+            #resp.dict['status'] = ERR
         except:
-            resp.dict['message'] = 'E_UNKNOWN'
-            resp.dict['status'] = ERR
+            #resp.dict['message'] = 'E_UNKNOWN'
+            #resp.dict['status'] = ERR
+            pass
 
         resp.body = json.dumps(resp.dict)
         #print '**************', '\nREQ\n', req
         #print '\nRESP\n', resp, '\n***************\n'
         return resp(environ, start_response)
 
+'''
     def check_has_only_one_user(self,req,resp):
         try:
             if (len(req.dict['input']['users']) == 1):
@@ -74,6 +80,7 @@ class JsonApp(object):
                 raise Exception('JsonApp', 'only allow one item')
         except:
             raise Exception('JsonApp', 'only allow one item')
+'''
         
 ###############################################################################
 # /u/signup
@@ -108,11 +115,12 @@ class JsonApp(object):
 ###############################################################################
 class UserApp(JsonApp):
     def signup(self,req,resp):
-        assert(self.check_has_only_one_user(req,resp))
+        #assert(self.check_has_only_one_user(req,resp))
+        print req
         user_dict = req.dict['input']['users'][0]
         print 'signup, user dict:', user_dict
-        # TODO check user exist outside addUser?
-        user_id = self.dbo.addUser(user_dict)
+        # TODO check user exist
+        user_id = self.dbo.addUser(user_dict['name'])
         resp.dict['output'] = {'users':[{'id':user_id}]}
         
     def login(self,req,resp):
@@ -184,16 +192,14 @@ class TagApp(JsonApp):
         pass
 
 
-
 ###############################################################################
 # Factory
 ###############################################################################
 import re
-def make_middleware(name):
+def middleware_factory(name,mode):
     if re.match(name,'UserApp'):
-        return UserApp()
-    elif re.match(name,'ItemApp'):
-        return ItemApp()
+        return UserApp(mode)
+#    elif re.match(name,'PaperApp'):
+#        return ItemApp()
     else:
         return None
-

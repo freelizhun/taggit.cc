@@ -1,4 +1,4 @@
-var IP = "http://taggit.cc:8080"
+var IP = "http://127.0.0.1:8002"
 var TEST_ID = ""
 
 // File API support.
@@ -68,12 +68,12 @@ $(function() {
     })
 });
 
-TEST_ID = "dbg_add_tag_to_item"
+TEST_ID = "dbg_user_signup"
 
 test_json("dbg_up", IP+"/", "")
-test_json("dbg_user_signup", IP+"/u/signup",
+test_json("dbg_user_signup", IP+"/user/signup",
 	  '{"input": {"users": [{"name": "sixin"}]}}')
-test_json("dbg_user_login", IP+"/u/login",
+test_json("dbg_user_login", IP+"/user/login",
 	  '{"input": {"users": [{"name": "sixin"}]}}')
 test_json("dbg_item_add_bibtex", IP+"/i/addbibtex",
 	  '{"input": {"users": [{"id": 1353815828105871}]}}')

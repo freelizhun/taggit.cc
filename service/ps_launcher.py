@@ -1,20 +1,25 @@
-# http://docs.webob.org/en/latest/jsonrpc-example.html
-# import traceback
+
 import sys
 from paste.cascade import Cascade
 from ps_router import RouterApp;
 from paste.urlparser import StaticURLParser
 
-def make_app():
-    service_app = RouterApp()
+def make_app(mode):
+    service_app = RouterApp(mode)
 
-    service_app.add_route("/u/signup", 'UserApp', 'signup')
-    service_app.add_route("/u/login", 'UserApp', 'login')
-    service_app.add_route("/i/addbibtex", 'ItemApp', 'add_item_by_bibtex')
-    service_app.add_route("/i/getbytag", 'ItemApp', 'get_item_by_tag')
-    service_app.add_route("/i/info", 'ItemApp', 'get_item_by_id')
-    service_app.add_route("/taggit", 'TagApp', 'add_tag_to_item')
-#    router.add_route("/search", SearchApp);
+    service_app.add_route("/user/signup", 'UserApp', 'signup')
+    service_app.add_route("/user/login", 'UserApp', 'login')
+
+    '''
+    service_app.add_route("/paper/addbibtex", 'PaperApp', 'add_by_bibtex')
+    service_app.add_route("/paper/getbytag", 'PaperApp', 'get_by_tag')
+    service_app.add_route("/paper/getbyid", 'PaperApp', 'get_by_id')
+    service_app.add_route("/tag/addname", 'TagApp', 'add_by_name')
+    service_app.add_route("/tag/additem", 'TagApp', 'add_to_item')
+    service_app.add_route("/tag/getbyitem", 'TagApp', 'get_by_item')
+    service_app.add_route("/tag/search", 'TagApp', 'search')
+    '''
+
     static_app = StaticURLParser('../www/')
     cascade_app = [service_app,static_app]
 
@@ -35,8 +40,11 @@ def main():
         help='debug or prod mode')
     options, args_ = parser.parse_args()
 
-    # options.mode
-    entry_app = make_app()
+    entry_app = make_app(options.mode)
+
+    if options.mode == 'debug':
+        options.port = 8002
+
     from paste import httpserver
     httpserver.serve(entry_app,host=options.host,port=options.port)
 

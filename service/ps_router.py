@@ -3,16 +3,17 @@ from webob import Request, Response
 from webob import exc
 
 from routes import Mapper
-from ps_middleware import make_middleware
+from ps_middleware import middleware_factory
 
 class RouterApp:
     """ Route request to the matching wsgiapp. """
-    def __init__(self):
+    def __init__(self,mode):
         self.map = Mapper()
         self.__routing_table = {}; # Maps path to app.
+        self.mode = mode
 
-    # POST/JSON 
-    # WebOb (No need?)
+    # HTTP POST json 
+    # -> webob (maybe no need?)
     def __call__(self, environ, start_response):
         req = Request(environ);
 #        print 'env:\n', environ
@@ -31,6 +32,7 @@ class RouterApp:
         return err(environ, start_response)
 
     def add_route(self, pat, mid, han):
-        if mid not in self.__routing_table:
-            self.__routing_table[mid] = make_middleware(mid); # SINGELTON?
+        if mid not in self.__routing_table: # SINGELTON
+            self.__routing_table[mid] = \
+                middleware_factory(mid,self.mode); 
         self.map.connect(pat,middleware=mid,handler=han)
