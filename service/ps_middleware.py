@@ -2,23 +2,12 @@ from webob import Request, Response
 from webob import exc
 
 import json
-#from simplejson import loads, dumps
 import taggit_pb2 as taggit_pb 
-
-#OK = taggit_pb.VLists.DESCRIPTOR.\
-#    enum_types_by_name['Status'].values_by_name['OK'].number
-#ERR = taggit_pb.VLists.DESCRIPTOR.\
-#    enum_types_by_name['Status'].values_by_name['ERR'].number
-#UNO = taggit_pb.VLists.DESCRIPTOR.\
-#    enum_types_by_name['Status'].values_by_name['UNKNOWN'].number
-
 from ps_database import db_factory
-
 import protobuf_json
 
 ###############################################################################
-# handler router
-#   environ['_HANDLER'] must be set !
+# PRE-REQUEST: handler router, environ['_HANDLER'] must be set !
 ###############################################################################
 class JsonApp(object):
     def __init__(self,mode):
@@ -83,98 +72,91 @@ class JsonApp(object):
 '''
         
 ###############################################################################
-# /u/signup
+# /user/signup
 ###############################################################################
 #   input: user[name]
 #   action:
         # check if user name exist in db
-        # if exist, raise exception
-        # if not exist, generate a unique user id and add into db
+        # if exist, return user id -1  
+        # if not exist, add into db, return the unique user id
 #   output: 
-        # OK: user[id]
-        # ERR
+        # user[id]
 #   ex:
 #     req: {"input": {"users": [{"name": "sixin"}]}}
-#     resp: 
+#     resp: {"output":{"users":[{"id":1}]}}
 # TODO once-verification code
 ###############################################################################
-# /u/login
+# /user/login
 ###############################################################################
-#   input: user[name,passwd]
+#   input: user[name]
 #   action:
         # check db
-        # if exist (OK), return user id, cookie
-        # if not exist (ERR), raise exception
+        # if exist, return user id
+        # if not exist, return user id -1
 #   output: 
-        # OK: uesr[id,cookie]
-        # ERR
+        # uesr[id]
+#   ex:
+#     
 # TODO password-cookie Auth
 ###############################################################################
-# /u/profile
-###############################################################################
+# TODO /user/profile
 ###############################################################################
 class UserApp(JsonApp):
     def signup(self,req,resp):
         #assert(self.check_has_only_one_user(req,resp))
         print req
         user_dict = req.dict['input']['users'][0]
-        print 'signup, user dict:', user_dict
-        # TODO check user exist
+        print '(I) userapp, signup:', user_dict
         user_id = self.dbo.addUser(user_dict['name'])
         resp.dict['output'] = {'users':[{'id':user_id}]}
         
     def login(self,req,resp):
-        assert(self.check_has_only_one_user(req,resp))
+        #assert(self.check_has_only_one_user(req,resp))
         user_dict = req.dict['input']['users'][0]
-        print 'login, user dict:', user_dict
-        user_id, user_cookie = self.dbo.loginUser(user_dict)
-        resp.dict['output'] = {'users':[{'id':user_id,\
-                                         'cookie':user_cookie}]}
+        print '(I) userapp, login:', user_dict
+        user_id = self.dbo.loginUser(user_dict['name'])
+        resp.dict['output'] = {'users':[{'id':user_id}]}
 
 ###############################################################################
-# /i/addbibtex -> add_item_by_bibtex
+# /paper/addbibtex -> add_paper_by_bibtex
 ###############################################################################
-#   input: user id, bibtex text
+#   input: bibtex string
 #   action:
-#       # auth user
 #       # parse bibtex
 #       # store into database
-#   output: item list
+#   output: paper list
 #   ex:
-#     req:  {"input": {"users": [{"id": "1"}], "items":[{"bibtex":"BIBTEX"}]}}
+#     req: {"input": {"users": [{"id": "1"}], "papers":[{"bibtex":"BIBTEX"}]}}
 #     resp: 
-#
+# TODO
+#       # auth user
+###############################################################################
+from zs.bibtex.parser import parse_string
+class PaperApp(JsonApp):
+    def add_by_bibtex(self,req,resp):
+        # user_dict = req.dict['input']['users'][0]
+        # user_id = user_dict['id']  # TODO check exist
+        # print 'add_item_by_bibtex, auth user:', user_dict
+        # assert(self.dbo.authUser(user_dict))
+        # assert(self.check_has_only_one_item(req,resp))
+        paper_dict = req.dict['input']['papers'][0] # assume one bibtex
+        # print '(I) paperapp, add_by_bibtex:', paper_dict
+        bibtex = paper_dict['bibtex']
+        bibtex_dict = parse_string(bibtex)
+        print '(I) paperapp, add_by_bibtex\n', bibtex_dict
+        paper_list = self.dbo.addPapersByBibtex(bibtex_dict)
+        resp.dict['output'] = {'papers':paper_list}
+
 ###############################################################################
 # /i/info
 ###############################################################################
-# 
-#
-#
-#
 ###############################################################################
 # /i/addtag -> add_tag_to_item
 ##############################################################################
+'''
 from zs.bibtex.parser import parse_string
 
 class ItemApp(JsonApp):
-    def add_item_by_bibtex(self,req,resp):
-        assert(self.check_has_only_one_user(req,resp))
-        user_dict = req.dict['input']['users'][0]
-        user_id = user_dict['id']
-
-        print 'add_item_by_bibtex, auth user:', user_dict
-        assert(self.dbo.authUser(user_dict))
-
-        assert(self.check_has_only_one_item(req,resp))
-        item_dict = req.dict['input']['items'][0]
-
-        bibtex = item_dict['bibtex'] # TODO check exist
-        bibtex_dict = parse_string(bibtex)
-        # print 'parsed bibtex\n', bibtex_dict
-
-        item_list = self.dbo.addItemByBibtex(bibtex_dict, user_id)
-        resp.dict['output'] = {'items':item_list}
-
     # offset, limit
     def get_item_by_tag(self,req,resp):
         pass
@@ -185,6 +167,7 @@ class ItemApp(JsonApp):
         print 'get item by id, item_list:', item_list
         item_list = self.dbo.getItem(item_list)
         resp.dict['output'] = {'items':item_list}
+'''
 
 ###############################################################################
 class TagApp(JsonApp):
@@ -199,7 +182,7 @@ import re
 def middleware_factory(name,mode):
     if re.match(name,'UserApp'):
         return UserApp(mode)
-#    elif re.match(name,'PaperApp'):
-#        return ItemApp()
+    elif re.match(name,'PaperApp'):
+        return PaperApp(mode)
     else:
         return None

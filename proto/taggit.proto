@@ -12,7 +12,7 @@ message Tag {
 
 message Item {
 	optional int32 id = 1;
-	optional string value = 2;
+	optional string name = 2;
 	extensions 100 to max;
 }
 
@@ -25,6 +25,7 @@ message Paper {
 	optional string year = 3;
 	optional string url = 4;
 	optional string lastmod = 5;
+	optional string bibtex = 6;
 }
 
 message UserTagItem {

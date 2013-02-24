@@ -1,9 +1,21 @@
 #import time
 #import random
-import sqlite3
+#import sqlite3
+import psycopg2
+import sys
+import datetime
+import time
+
+BIBTEX_PAPER_MAP = {
+    'title':'title',
+    'author':'author',
+    'year':'year',
+    'url':'url',
+    '__bibtex':'bibtex',
+}
 
 ###############################################################################
-# primitives
+# DB
 ###############################################################################
 class db_taggit:
     # Singleton
@@ -14,236 +26,203 @@ class db_taggit:
                                 cls, *args, **kwargs)
         return cls._instance
 
-    def __init__(self,sqlpath):
-        self.sql3 = sqlite3.connect(sqlpath)
+    def __init__(self,sqlhost):
+        self.sql2 = None
+        try:
+            self.sql2 = psycopg2.connect(host=sqlhost, port='5432', \
+                          database='test', user='taggit', password='taggit')
+        except psycopg2.DatabaseError, e:
+            print '(F) db_taggit init: %s' % e
+            sys.exit()
 
     def __del__(self):
-        self.sql3.close()
+        if self.sql2:
+            self.sql2.close()
 
-    def execsql(self,sqlfile):
-        c = self.sql3.cursor()
+    def reset(self):
         try:
-            with open(sqlfile) as f:
-                c.executescript(f.read())
-                self.sql3.commit()
-        except Exception, err:
-            print 'db_taggit execute:', err
-        c.close()
+            cur = self.sql2.cursor()
 
-    # signup: add new user
-    # input: user name
-    # output: user id
-    def addUser(self, user_name): 
-        sql = '''INSERT INTO User(name) VALUES(''' +\
-            '"' + user_name + '"' + ''');'''
-        c = self.sql3.cursor()
-        c.execute(sql)
-        self.sql3.commit()
-        user_id = c.lastrowid
-        c.close()
-        return user_id
+            cur.execute("DROP INDEX IF EXISTS index_tn")
+            cur.execute("DROP INDEX IF EXISTS index_un")
+            cur.execute("DROP TABLE IF EXISTS utis")
+            cur.execute("DROP TABLE IF EXISTS papers")
+            cur.execute("DROP TABLE IF EXISTS items")
+            cur.execute("DROP TABLE IF EXISTS tags")
+            cur.execute("DROP TABLE IF EXISTS users")
 
-    # login: add new user
-    # input: user name
-    # output: user id        
-    def loginUser(self, user_name):
-        sql = '''SELECT id from User where name = ''' +\
-            '"' + user_name + + '"' + ''');'''
-        c = self.sql3.cursor()
-        c.execute(sql)
-        self.sql3.commit()
-        results = c.fetchall()
-        c.close()
-        print results
-        return resutls[0]
+            cur.execute(
+                "CREATE TABLE users(id serial PRIMARY KEY, name VARCHAR(15))")
+            cur.execute(
+                "CREATE TABLE tags(id serial PRIMARY KEY, name VARCHAR(15))")
+            cur.execute(
+                "CREATE TABLE items(id serial PRIMARY KEY, name VARCHAR(127))")
+            cur.execute(
+                "CREATE TABLE papers(id INT, title VARCHAR(127), "+\
+                  "author VARCHAR(127), year VARCHAR(4), url VARCHAR(127), "+\
+                  "lastmod timestamp, bibtex VARCHAR(8191), "+\
+                  "FOREIGN KEY(id) REFERENCES items(id))")
+            cur.execute(
+                "CREATE TABLE utis(" +\
+                    "user_id INTEGER, tag_id INTEGER, item_id INTEGER, "+\
+                    "FOREIGN KEY(user_id) REFERENCES users(id), "+\
+                    "FOREIGN KEY(tag_id) REFERENCES tags(id), "+\
+                    "FOREIGN KEY(item_id) REFERENCES items(id))")
+            cur.execute("CREATE INDEX index_un ON users (name)")
+            cur.execute("CREATE INDEX index_tn ON tags (name)")
+            
+            self.sql2.commit()
 
-'''
-    # return new tag id
-    def addTag (self, tag_dict, user_id): pass
-    # return new item id
-    def addItem(self, item_dict, user_id): pass
-    def addItemByBibtex(self, bibtex_dict, user_id): pass
-    # return OK/ERR?
-    def tagItem(self, user_id, tag_id, item_id): pass
-'''
+        except psycopg2.DatabaseError, e:
+            self.sql2.rollback()
+            print '(E) db_taggit reset: %s' % e
+        finally:
+            cur.close()
 
-#ITEM_DB_MAP = {
-#    '__bibtex':'bibtex',
-#    '_type':'type',
-#    'author':'author',
-#    'year':'year',
-#    'url':'url'
-#}
-
-###############################################################################
-# cassandra
-###############################################################################
-'''
-import pycassa
-from pycassa.pool import ConnectionPool
-from pycassa import NotFoundException
-from pycassa.columnfamily import ColumnFamily
-
-class db_cassandra(db_taggit):
-    def __init__(self, hosts):
-        self.pool = ConnectionPool('taggit', hosts)
-        self.cf_user = pycassa.ColumnFamily(self.pool, 'User')
-        self.cf_user_name2id = pycassa.ColumnFamily(self.pool, 'Uname2id')
-        self.cf_item = pycassa.ColumnFamily(self.pool, 'Item')
-        self.cf_user_add_item = pycassa.ColumnFamily(self.pool, 'UIAdd')
-        self.cf_item_added_user = pycassa.ColumnFamily(self.pool, 'IUAdded')
-
-    def __del__(self):
-        self.pool = None
-
-    # signup
-    def addUser(self, user_dict):
-        user_name = user_dict['name']
+    def execute1(self, sql):
         try:
-            ret = self.cf_user_name2id.get(user_name)
-            print 'ERR user exist:', ret
-            raise Exception('addUser', 'E_USER_ALREADY_EXIST')
-        except NotFoundException:
-            # TODO in batch (transaction)
-            print 'OK to addUser:', user_name
-            user_id = self.genKeyId(self.cf_user)
-            print 'generated user id:', user_id
+            cur = self.sql2.cursor()
+            cur.execute(sql)
+            rows = cur.fetchall()
+        except psycopg2.DatabaseError, e:
+            print '(E) db_taggit execute1: %s' % e
+        finally:
+            cur.close()
+        return rows        
 
-            print 'add into user_name2id:', {'user_id':user_id}
-            self.cf_user_name2id.insert(user_name,{'user_id':user_id})
-
-            print 'add into user:', user_dict
-            self.cf_user.insert(user_id,user_dict)
-
-            return user_id        
-    
-    # get user profile by user id
-    # TODO combined use with searchUser
-    def getUser(self, user_dict):
-        user_id = user_dict['id']
+    def execute2(self, sql, data):
         try:
-            ret = self.cf_user.get(user_id)
-            print 'OK user found:', ret
-            return ret['name']
-        except NotFoundException:
-            raise Exception('getUser', 'E_USER_NOT_FOUND')
+            cur = self.sql2.cursor()
+            cur.execute(sql, data)
+            rows = cur.fetchall()
+        except psycopg2.DatabaseError, e:
+            print '(E) db_taggit execute2: %s' % e
+        finally:
+            cur.close()
+        return rows
 
-    # login 
-    # input: user[name]
-    # return user[id,cookie]
-    def loginUser(self, user_dict):
-        user_name = user_dict['name']
+    def commit1(self, sql):
         try:
-            # TODO cookie
-            ret = self.cf_user_name2id.get(user_name)
-            print 'OK user login:', ret
-            return ret['user_id'], user_name
-        except NotFoundException:
-            raise Exception('loginUser', 'E_USER_NOT_FOUND')
-    
-    # auth 
-    # input: user[id]
-    # return True if ok, otherwise raise exception 
-    def authUser(self, user_dict):
-        # TODO, passwd, cookie (loginUser)
-        # right now only check user id
-        user_id = user_dict['id']
+            cur = self.sql2.cursor()
+            cur.execute(sql)
+            self.sql2.commit()
+            rows = cur.fetchall()
+        except psycopg2.DatabaseError, e:
+            self.sql2.rollback()
+            print '(E) db_taggit commit1: %s' % e
+        finally:
+            cur.close()
+        return rows
+
+    def commit0(self):
         try:
-            ret = self.cf_user.get(user_id)
-            print 'OK user auth:', ret
+            self.sql2.commit()
+        except psycopg2.DatabaseError, e:
+            self.sql2.rollback()
+            print '(E) db_taggit commit0: %s' % e
+
+    def commit3(self, sql, data):
+        try:
+            cur = self.sql2.cursor()
+            cur.executemany(sql, data)
+            self.sql2.commit()
+            #rows = cur.fetchmany()
+        except psycopg2.DatabaseError, e:
+            self.sql2.rollback()
+            print '(E) db_taggit commit3: %s' % e
+        finally:
+            cur.close()
+        #return rows
+
+    def add0(self, sql, data):
+        rows = self.execute2(sql, data)
+        assert(len(rows)==1)
+        return rows[0][0] # id
+
+    def add1(self, sql):
+        rows = self.commit1(sql)
+        assert(len(rows)==1)
+        return rows[0][0] # id
+
+    def exist(self, sql):
+        rows = self.execute1(sql)
+        if len(rows) > 0:
             return True
-        except:
-            raise Exception('authUser', 'E_USER_AUTH')
+        else:
+            return False
 
-    # assume user authed
-    # return item_id
-    def addItem(self, item_dict, user_id):
-        # TODO check item exists? ..
-        # TODO in BATCH (transaction)
-        try:
-            print 'OK to addItem'
-            item_id = self.genKeyId(self.cf_item)
-            print 'generated item id:', item_id
+    # add new user
+    # input: user name
+    # output: user id or -1 (if user exist)
+    def addUser(self, name): 
+        if not self.existUser(name):
+            sql = 'INSERT INTO users(name) VALUES('+\
+                "'" + name + "'" + ') RETURNING id;'
+            return self.add1(sql)
+        return -1
 
-            # print 'add into item:', item_dict
-            self.cf_item.insert(item_id,item_dict)
+    def existUser(self, name):
+        sql = 'SELECT id from users where name = '+\
+            "'" + name + "'" + ';'
+        return self.exist(sql)
+    
+    # user login
+    # input: user name
+    # output: user id or -1 (if user not exist)
+    def loginUser(self, name):
+        user_id = -1
+        sql = 'SELECT id from users where name = '+\
+            "'" + name + "'" + ';'
+        rows = self.execute1(sql)
+        if len(rows) > 0:
+            id = rows[0][0]
+        return id
 
-            print 'user item add relation:', user_id, ',', item_id
-            self.cf_user_add_item.insert(user_id,{item_id:''})
-            self.cf_item_added_user.insert(item_id,{user_id:''})
+    # similar to existItem
+    def existItem(self, name):
+        sql = 'SELECT id from items where name = '+\
+            "'" + name + "'" + ';'
+        return self.exist(sql)
 
-            return item_id
-        except Exception, e:
-            raise Exception('addItem', 'E_ADD_ITEM')
-
-    # return item_list
-    def addItemByBibtex(self, bibtex_dict, user_id):
-        item_list = []
+    # similar to addUser
+    def addItem(self, name):
+        if not self.existItem(name):
+            sql = 'INSERT INTO items(name) VALUES('+\
+                "'" + name + "'" + ') RETURNING id;'
+            return self.add1(sql)
+        return -1
+    
+    def addPapersByBibtex(self, bibtex_dict):
+        paper_list = []
+        sql = """INSERT INTO papers(id,title,author,year,url,lastmod,bibtex) VALUES (%(id)s, %(title)s, %(author)s, %(year)s, %(url)s,%(lastmod)s, %(bibtex)s)  RETURNING id;"""
         for key in bibtex_dict:
-            # print '\nitem', key, '\nbibtex:\n', bibtex_dict[key]['__bibtex']
-            item_dict = {}
-            for field in ITEM_DB_MAP:
-                try:
-                    if (bibtex_dict[key][field]):
-                        item_dict[ITEM_DB_MAP[field]] =\
-                            bibtex_dict[key][field]
-                except KeyError:
-                    #print 'skipping field:', field
-                    pass
+            paper_dict = {}
+            paper_dict['id'] = self.addItem(key)
+            paper_dict['lastmod'] = datetime.datetime.utcnow().strftime(\
+                "%a, %d %b %Y %H:%M:%S +0000")
+            if (paper_dict['id'] != -1):
+                for field in BIBTEX_PAPER_MAP:                    
+                    paper_dict[BIBTEX_PAPER_MAP[field]] = ''
+                    try:
+                        if (bibtex_dict[key][field]):
+                            paper_dict[BIBTEX_PAPER_MAP[field]] =\
+                                bibtex_dict[key][field]
+                    except KeyError, e:
+                        pass
+                paper_id = self.add0(sql,paper_dict)
+                paper_list.append({'id':paper_id})
+            else:
+                paper_list.append({'id':-1})
 
-            # print 'add item_dict:', item_dict
-            item_id = self.addItem(item_dict,user_id)
-            item_dict['id'] = item_id
+        self.commit0() # TODO rollback -> -1
+        return paper_list
 
-            for field in ITEM_DB_MAP:
-                try:
-                    if field.startswith('__'):
-                        #print 'removing field:', ITEM_DB_MAP[field]
-                        del(item_dict[ITEM_DB_MAP[field]])
-                except KeyError:
-                    pass
-
-            item_list.append(item_dict)
-        return item_list
-
-    # get item dict (full info) by item id
-    def getItem(self, item_list):
-        item_list_ = []
-        for item_dict in item_list:
-            item_id = item_dict['id']
-            try:
-                item_dict_ = dict(self.cf_item.get(item_id))
-                item_dict_['id'] = item_id
-                print 'OK item found:', item_dict_
-                item_list_.append(item_dict_)
-            except NotFoundException:
-                raise Exception('getItem', 'E_ITEM_NOT_FOUND')
-        return item_list_
-
-    # generate id (unique key) for ColumnFamily cf
-    def genKeyId(self,cf):
-        while 1:
-            gid = long(time.mktime(time.gmtime()))*1000000\
-                + random.randint(1,1000000) # mms
-            try:
-                cf.get(gid)
-            except NotFoundException:
-                cf.insert(gid,{}) # get slot
-                return gid
-            except: 
-                raise Exception('genKeyId', 'E_UNKNOWN')
-
-            sleep(0.005)
-
-'''
 
 ###############################################################################
 # Factory
 ###############################################################################
 def db_factory(mode):
-    if mode == "debug":
-        sql3_db = '../db/test.db'
-        dbo = db_taggit(sql3_db) 
-        dbo.execsql('../db/deldb.sql3')
-        dbo.execsql('../db/newdb.sql3')
+    dbo = db_taggit('taggit.cc')
+    if mode == "reset":
+        dbo.reset()
     return dbo

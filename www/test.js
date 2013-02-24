@@ -20,8 +20,8 @@ function handleFileSelect(evt) {
 	    txt = ev.target.result
 	    json = $("#input_json").val()
 	    obj = jQuery.parseJSON(json)
-	    obj['input']['items'] = []
-	    obj['input']['items'][0] = {'bibtex':txt}
+	    obj['input']['papers'] = []
+	    obj['input']['papers'][0] = {'bibtex':txt}
 	    $("#input_json").val(JSON.stringify(obj))
 	}
 	reader.readAsText(f)
@@ -68,18 +68,15 @@ $(function() {
     })
 });
 
-TEST_ID = "dbg_user_signup"
+TEST_ID = "dbg_paper_add_bibtex"
 
-test_json("dbg_up", IP+"/", "")
 test_json("dbg_user_signup", IP+"/user/signup",
 	  '{"input": {"users": [{"name": "sixin"}]}}')
 test_json("dbg_user_login", IP+"/user/login",
 	  '{"input": {"users": [{"name": "sixin"}]}}')
-test_json("dbg_item_add_bibtex", IP+"/i/addbibtex",
-	  '{"input": {"users": [{"id": 1353815828105871}]}}')
-test_json("dbg_get_item", IP+"/i/info",
+test_json("dbg_paper_add_bibtex", IP+"/paper/addbibtex",
+	  '{"input": {"users": [{"id": 1}]}}')
+test_json("dbg_paper_get", IP+"/i/info",
 	  '{"input": {"items": [{"id": 1353818091220523}, {"id": 1353818091342429}]}}')
-test_json("dbg_add_tag_to_item", IP+"/t/aggit",
+test_json("dbg_tag_add_to_item", IP+"/t/aggit",
 	  '{"input": {"users": [{"id": 1353815828105871}]}, {"items": [{"id": 1353818091220523}]}, {"tags": [{"name": "tag1"}, {"name", "tag2"}]} }')
-
-

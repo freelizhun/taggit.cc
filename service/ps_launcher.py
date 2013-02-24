@@ -9,9 +9,9 @@ def make_app(mode):
 
     service_app.add_route("/user/signup", 'UserApp', 'signup')
     service_app.add_route("/user/login", 'UserApp', 'login')
-
-    '''
     service_app.add_route("/paper/addbibtex", 'PaperApp', 'add_by_bibtex')
+
+    '''TODO
     service_app.add_route("/paper/getbytag", 'PaperApp', 'get_by_tag')
     service_app.add_route("/paper/getbyid", 'PaperApp', 'get_by_id')
     service_app.add_route("/tag/addname", 'TagApp', 'add_by_name')
@@ -42,7 +42,7 @@ def main():
 
     entry_app = make_app(options.mode)
 
-    if options.mode == 'debug':
+    if options.mode == 'debug' or 'reset':
         options.port = 8002
 
     from paste import httpserver
