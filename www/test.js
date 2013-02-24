@@ -68,15 +68,30 @@ $(function() {
     })
 });
 
-TEST_ID = "dbg_paper_add_bibtex"
+TEST_ID = "dbg_user_signup"
 
 test_json("dbg_user_signup", IP+"/user/signup",
 	  '{"input": {"users": [{"name": "sixin"}]}}')
 test_json("dbg_user_login", IP+"/user/login",
 	  '{"input": {"users": [{"name": "sixin"}]}}')
 test_json("dbg_paper_add_bibtex", IP+"/paper/addbibtex",
-	  '{"input": {"users": [{"id": 1}]}}')
-test_json("dbg_paper_get", IP+"/i/info",
-	  '{"input": {"items": [{"id": 1353818091220523}, {"id": 1353818091342429}]}}')
-test_json("dbg_tag_add_to_item", IP+"/t/aggit",
-	  '{"input": {"users": [{"id": 1353815828105871}]}, {"items": [{"id": 1353818091220523}]}, {"tags": [{"name": "tag1"}, {"name", "tag2"}]} }')
+	  '{"input":{"users":[{"id":1}],"papers":[{"bibtex":\"@article \{ abc-13,\\n title = \\"EDF\\",\\n author = \\"GHI\\",\\n journal = \\"JKL\\",\\n year = \\"2013\\",\\n note = \\"in press\\"\\n\}\"}]}}')
+//	  '{"input": {"users": [{"id": 1}]}}')
+test_json("dbg_paper_get_by_id", IP+"/paper/getbyid",
+	  '{"input": {"papers": [{"id": 1}, {"id": 2}]}}')
+test_json("dbg_tag_add_by_name", IP+"/tag/addbyname",
+	  '{"input": {"tags": [{"name": "tag1"}]}}')
+test_json("dbg_user_tag_item", IP+"/user/tagitem",
+	  '{"input": {"utis": [{"user_id": 1, "tag_id": 1, "item_id": 1}]}}')
+test_json("dbg_tag_get_by_item_id", IP+"/tag/getbyitem",
+	  '{"input": {"items": [{"id": 1}]}}')
+test_json("dbg_user_detag_item", IP+"/user/detagitem",
+	  '{"input": {"utis": [{"user_id": 1, "tag_id": 1, "item_id": 1}]}}')
+test_json("dbg_paper_get_by_tag_id", IP+"/paper/getbytag",
+	  '{"input": {"tags": [{"id": 1}]}}')
+test_json("dbg_paper_get_top10", IP+"/paper/gettop10",
+	  '{}')
+test_json("dbg_tag_get_top10", IP+"/tag/gettop10",
+	  '{}')
+test_json("dbg_tag_search_by_prefix", IP+"/tag/searchbyprefix",
+	  '{"input": {"query": "tag", "query_size": 100}}')

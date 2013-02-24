@@ -11,61 +11,29 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = descriptor.FileDescriptor(
   name='taggit.proto',
   package='taggit_pb',
-  serialized_pb='\n\x0ctaggit.proto\x12\ttaggit_pb\"?\n\x0bUserTagItem\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x0e\n\x06tag_id\x18\x02 \x01(\x03\x12\x0f\n\x07item_id\x18\x03 \x01(\x03\"t\n\x04User\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0e\n\x06passwd\x18\x03 \x01(\t\x12\x0e\n\x06\x63ookie\x18\x04 \x01(\t\x12\x0c\n\x04hits\x18\x64 \x01(\x03\x12$\n\x04rels\x18\x65 \x03(\x0b\x32\x16.taggit_pb.UserTagItem\"\x9f\x01\n\x03Tag\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x14\n\x0clastmod_when\x18` \x01(\t\x12\x12\n\nlastmod_by\x18\x61 \x01(\t\x12\x10\n\x08\x61\x64\x64_when\x18\x62 \x01(\t\x12\x0e\n\x06\x61\x64\x64_by\x18\x63 \x01(\t\x12\x0c\n\x04hits\x18\x64 \x01(\x03\x12$\n\x04rels\x18\x65 \x03(\x0b\x32\x16.taggit_pb.UserTagItem\"\xf8\x01\n\x04Item\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\r\n\x05title\x18\x04 \x01(\t\x12\x0e\n\x06\x61uthor\x18\x05 \x01(\t\x12\x0c\n\x04year\x18\x06 \x01(\t\x12\x0b\n\x03url\x18\x07 \x01(\t\x12\x0c\n\x04type\x18Y \x01(\t\x12\x0e\n\x06\x62ibtex\x18Z \x01(\t\x12\x14\n\x0clastmod_when\x18` \x01(\t\x12\x12\n\nlastmod_by\x18\x61 \x01(\t\x12\x10\n\x08\x61\x64\x64_when\x18\x62 \x01(\t\x12\x0e\n\x06\x61\x64\x64_by\x18\x63 \x01(\t\x12\x0c\n\x04hits\x18\x64 \x01(\x03\x12$\n\x04rels\x18\x65 \x03(\x0b\x32\x16.taggit_pb.UserTagItem\"e\n\x05VList\x12\x1e\n\x05users\x18\x01 \x03(\x0b\x32\x0f.taggit_pb.User\x12\x1c\n\x04tags\x18\x02 \x03(\x0b\x32\x0e.taggit_pb.Tag\x12\x1e\n\x05items\x18\x03 \x03(\x0b\x32\x0f.taggit_pb.Item\".\n\x0bJsonRequest\x12\x1f\n\x05input\x18\x01 \x01(\x0b\x32\x10.taggit_pb.VList\"\xa2\x01\n\x0cJsonResponse\x12 \n\x06output\x18\x01 \x01(\x0b\x32\x10.taggit_pb.VList\x12\x37\n\x06status\x18\x02 \x01(\x0e\x32\x1e.taggit_pb.JsonResponse.Status:\x07UNKNOWN\x12\x0f\n\x07message\x18\x03 \x01(\t\"&\n\x06Status\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x06\n\x02OK\x10\x01\x12\x07\n\x03\x45RR\x10\x02')
+  serialized_pb='\n\x0ctaggit.proto\x12\ttaggit_pb\" \n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\"\x1f\n\x03Tag\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\"*\n\x04Item\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t*\x08\x08\x64\x10\x80\x80\x80\x80\x02\"\x94\x01\n\x05Paper\x12\r\n\x05title\x18\x01 \x01(\t\x12\x0e\n\x06\x61uthor\x18\x02 \x01(\t\x12\x0c\n\x04year\x18\x03 \x01(\t\x12\x0b\n\x03url\x18\x04 \x01(\t\x12\x0f\n\x07lastmod\x18\x05 \x01(\t\x12\x0e\n\x06\x62ibtex\x18\x06 \x01(\t20\n\x05paper\x12\x0f.taggit_pb.Item\x18\x65 \x01(\x0b\x32\x10.taggit_pb.Paper\"?\n\x0bUserTagItem\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x0e\n\x06tag_id\x18\x02 \x01(\x05\x12\x0f\n\x07item_id\x18\x03 \x01(\x05\"\xfd\x01\n\x06VLists\x12\x1e\n\x05users\x18\x01 \x03(\x0b\x32\x0f.taggit_pb.User\x12\x1c\n\x04tags\x18\x02 \x03(\x0b\x32\x0e.taggit_pb.Tag\x12\x1e\n\x05items\x18\x03 \x03(\x0b\x32\x0f.taggit_pb.Item\x12$\n\x04utis\x18\x04 \x03(\x0b\x32\x16.taggit_pb.UserTagItem\x12 \n\x06papers\x18\x05 \x03(\x0b\x32\x10.taggit_pb.Paper\x12\r\n\x05query\x18\x0b \x01(\t\x12\x17\n\x0cquery_offset\x18\x0c \x01(\x05:\x01\x30\x12\x15\n\nquery_size\x18\r \x01(\x05:\x01\x30\x12\x0e\n\x06status\x18\x65 \x01(\t\"/\n\x0bJsonRequest\x12 \n\x05input\x18\x01 \x01(\x0b\x32\x11.taggit_pb.VLists\"1\n\x0cJsonResponse\x12!\n\x06output\x18\x01 \x01(\x0b\x32\x11.taggit_pb.VLists')
 
 
 
-_JSONRESPONSE_STATUS = descriptor.EnumDescriptor(
-  name='Status',
-  full_name='taggit_pb.JsonResponse.Status',
-  filename=None,
-  file=DESCRIPTOR,
-  values=[
-    descriptor.EnumValueDescriptor(
-      name='UNKNOWN', index=0, number=0,
-      options=None,
-      type=None),
-    descriptor.EnumValueDescriptor(
-      name='OK', index=1, number=1,
-      options=None,
-      type=None),
-    descriptor.EnumValueDescriptor(
-      name='ERR', index=2, number=2,
-      options=None,
-      type=None),
-  ],
-  containing_type=None,
-  options=None,
-  serialized_start=899,
-  serialized_end=937,
-)
 
-
-_USERTAGITEM = descriptor.Descriptor(
-  name='UserTagItem',
-  full_name='taggit_pb.UserTagItem',
+_USER = descriptor.Descriptor(
+  name='User',
+  full_name='taggit_pb.User',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     descriptor.FieldDescriptor(
-      name='user_id', full_name='taggit_pb.UserTagItem.user_id', index=0,
-      number=1, type=3, cpp_type=2, label=1,
+      name='id', full_name='taggit_pb.User.id', index=0,
+      number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='tag_id', full_name='taggit_pb.UserTagItem.tag_id', index=1,
-      number=2, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='item_id', full_name='taggit_pb.UserTagItem.item_id', index=2,
-      number=3, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
+      name='name', full_name='taggit_pb.User.name', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -79,70 +47,7 @@ _USERTAGITEM = descriptor.Descriptor(
   is_extendable=False,
   extension_ranges=[],
   serialized_start=27,
-  serialized_end=90,
-)
-
-
-_USER = descriptor.Descriptor(
-  name='User',
-  full_name='taggit_pb.User',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    descriptor.FieldDescriptor(
-      name='id', full_name='taggit_pb.User.id', index=0,
-      number=1, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='name', full_name='taggit_pb.User.name', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='passwd', full_name='taggit_pb.User.passwd', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='cookie', full_name='taggit_pb.User.cookie', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='hits', full_name='taggit_pb.User.hits', index=4,
-      number=100, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='rels', full_name='taggit_pb.User.rels', index=5,
-      number=101, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  extension_ranges=[],
-  serialized_start=92,
-  serialized_end=208,
+  serialized_end=59,
 )
 
 
@@ -155,7 +60,7 @@ _TAG = descriptor.Descriptor(
   fields=[
     descriptor.FieldDescriptor(
       name='id', full_name='taggit_pb.Tag.id', index=0,
-      number=1, type=3, cpp_type=2, label=1,
+      number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -164,48 +69,6 @@ _TAG = descriptor.Descriptor(
       name='name', full_name='taggit_pb.Tag.name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='lastmod_when', full_name='taggit_pb.Tag.lastmod_when', index=2,
-      number=96, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='lastmod_by', full_name='taggit_pb.Tag.lastmod_by', index=3,
-      number=97, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='add_when', full_name='taggit_pb.Tag.add_when', index=4,
-      number=98, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='add_by', full_name='taggit_pb.Tag.add_by', index=5,
-      number=99, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='hits', full_name='taggit_pb.Tag.hits', index=6,
-      number=100, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='rels', full_name='taggit_pb.Tag.rels', index=7,
-      number=101, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -218,8 +81,8 @@ _TAG = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=211,
-  serialized_end=370,
+  serialized_start=61,
+  serialized_end=92,
 )
 
 
@@ -232,7 +95,7 @@ _ITEM = descriptor.Descriptor(
   fields=[
     descriptor.FieldDescriptor(
       name='id', full_name='taggit_pb.Item.id', index=0,
-      number=1, type=3, cpp_type=2, label=1,
+      number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -244,87 +107,115 @@ _ITEM = descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=True,
+  extension_ranges=[(100, 536870912), ],
+  serialized_start=94,
+  serialized_end=136,
+)
+
+
+_PAPER = descriptor.Descriptor(
+  name='Paper',
+  full_name='taggit_pb.Paper',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
     descriptor.FieldDescriptor(
-      name='title', full_name='taggit_pb.Item.title', index=2,
+      name='title', full_name='taggit_pb.Paper.title', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='author', full_name='taggit_pb.Paper.author', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='year', full_name='taggit_pb.Paper.year', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='url', full_name='taggit_pb.Paper.url', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='author', full_name='taggit_pb.Item.author', index=3,
+      name='lastmod', full_name='taggit_pb.Paper.lastmod', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='year', full_name='taggit_pb.Item.year', index=4,
+      name='bibtex', full_name='taggit_pb.Paper.bibtex', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+  ],
+  extensions=[
     descriptor.FieldDescriptor(
-      name='url', full_name='taggit_pb.Item.url', index=5,
-      number=7, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
+      name='paper', full_name='taggit_pb.Paper.paper', index=0,
+      number=101, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
+      is_extension=True, extension_scope=None,
       options=None),
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=139,
+  serialized_end=287,
+)
+
+
+_USERTAGITEM = descriptor.Descriptor(
+  name='UserTagItem',
+  full_name='taggit_pb.UserTagItem',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
     descriptor.FieldDescriptor(
-      name='type', full_name='taggit_pb.Item.type', index=6,
-      number=89, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='bibtex', full_name='taggit_pb.Item.bibtex', index=7,
-      number=90, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='lastmod_when', full_name='taggit_pb.Item.lastmod_when', index=8,
-      number=96, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='lastmod_by', full_name='taggit_pb.Item.lastmod_by', index=9,
-      number=97, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='add_when', full_name='taggit_pb.Item.add_when', index=10,
-      number=98, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='add_by', full_name='taggit_pb.Item.add_by', index=11,
-      number=99, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='hits', full_name='taggit_pb.Item.hits', index=12,
-      number=100, type=3, cpp_type=2, label=1,
+      name='user_id', full_name='taggit_pb.UserTagItem.user_id', index=0,
+      number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='rels', full_name='taggit_pb.Item.rels', index=13,
-      number=101, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
+      name='tag_id', full_name='taggit_pb.UserTagItem.tag_id', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='item_id', full_name='taggit_pb.UserTagItem.item_id', index=2,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -337,36 +228,78 @@ _ITEM = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=373,
-  serialized_end=621,
+  serialized_start=289,
+  serialized_end=352,
 )
 
 
-_VLIST = descriptor.Descriptor(
-  name='VList',
-  full_name='taggit_pb.VList',
+_VLISTS = descriptor.Descriptor(
+  name='VLists',
+  full_name='taggit_pb.VLists',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     descriptor.FieldDescriptor(
-      name='users', full_name='taggit_pb.VList.users', index=0,
+      name='users', full_name='taggit_pb.VLists.users', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='tags', full_name='taggit_pb.VList.tags', index=1,
+      name='tags', full_name='taggit_pb.VLists.tags', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='items', full_name='taggit_pb.VList.items', index=2,
+      name='items', full_name='taggit_pb.VLists.items', index=2,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='utis', full_name='taggit_pb.VLists.utis', index=3,
+      number=4, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='papers', full_name='taggit_pb.VLists.papers', index=4,
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='query', full_name='taggit_pb.VLists.query', index=5,
+      number=11, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='query_offset', full_name='taggit_pb.VLists.query_offset', index=6,
+      number=12, type=5, cpp_type=1, label=1,
+      has_default_value=True, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='query_size', full_name='taggit_pb.VLists.query_size', index=7,
+      number=13, type=5, cpp_type=1, label=1,
+      has_default_value=True, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='status', full_name='taggit_pb.VLists.status', index=8,
+      number=101, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -379,8 +312,8 @@ _VLIST = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=623,
-  serialized_end=724,
+  serialized_start=355,
+  serialized_end=608,
 )
 
 
@@ -407,8 +340,8 @@ _JSONREQUEST = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=726,
-  serialized_end=772,
+  serialized_start=610,
+  serialized_end=657,
 )
 
 
@@ -426,57 +359,34 @@ _JSONRESPONSE = descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
-    descriptor.FieldDescriptor(
-      name='status', full_name='taggit_pb.JsonResponse.status', index=1,
-      number=2, type=14, cpp_type=8, label=1,
-      has_default_value=True, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='message', full_name='taggit_pb.JsonResponse.message', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
-    _JSONRESPONSE_STATUS,
   ],
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=775,
-  serialized_end=937,
+  serialized_start=659,
+  serialized_end=708,
 )
 
-_USER.fields_by_name['rels'].message_type = _USERTAGITEM
-_TAG.fields_by_name['rels'].message_type = _USERTAGITEM
-_ITEM.fields_by_name['rels'].message_type = _USERTAGITEM
-_VLIST.fields_by_name['users'].message_type = _USER
-_VLIST.fields_by_name['tags'].message_type = _TAG
-_VLIST.fields_by_name['items'].message_type = _ITEM
-_JSONREQUEST.fields_by_name['input'].message_type = _VLIST
-_JSONRESPONSE.fields_by_name['output'].message_type = _VLIST
-_JSONRESPONSE.fields_by_name['status'].enum_type = _JSONRESPONSE_STATUS
-_JSONRESPONSE_STATUS.containing_type = _JSONRESPONSE;
-DESCRIPTOR.message_types_by_name['UserTagItem'] = _USERTAGITEM
+_VLISTS.fields_by_name['users'].message_type = _USER
+_VLISTS.fields_by_name['tags'].message_type = _TAG
+_VLISTS.fields_by_name['items'].message_type = _ITEM
+_VLISTS.fields_by_name['utis'].message_type = _USERTAGITEM
+_VLISTS.fields_by_name['papers'].message_type = _PAPER
+_JSONREQUEST.fields_by_name['input'].message_type = _VLISTS
+_JSONRESPONSE.fields_by_name['output'].message_type = _VLISTS
 DESCRIPTOR.message_types_by_name['User'] = _USER
 DESCRIPTOR.message_types_by_name['Tag'] = _TAG
 DESCRIPTOR.message_types_by_name['Item'] = _ITEM
-DESCRIPTOR.message_types_by_name['VList'] = _VLIST
+DESCRIPTOR.message_types_by_name['Paper'] = _PAPER
+DESCRIPTOR.message_types_by_name['UserTagItem'] = _USERTAGITEM
+DESCRIPTOR.message_types_by_name['VLists'] = _VLISTS
 DESCRIPTOR.message_types_by_name['JsonRequest'] = _JSONREQUEST
 DESCRIPTOR.message_types_by_name['JsonResponse'] = _JSONRESPONSE
-
-class UserTagItem(message.Message):
-  __metaclass__ = reflection.GeneratedProtocolMessageType
-  DESCRIPTOR = _USERTAGITEM
-  
-  # @@protoc_insertion_point(class_scope:taggit_pb.UserTagItem)
 
 class User(message.Message):
   __metaclass__ = reflection.GeneratedProtocolMessageType
@@ -496,11 +406,23 @@ class Item(message.Message):
   
   # @@protoc_insertion_point(class_scope:taggit_pb.Item)
 
-class VList(message.Message):
+class Paper(message.Message):
   __metaclass__ = reflection.GeneratedProtocolMessageType
-  DESCRIPTOR = _VLIST
+  DESCRIPTOR = _PAPER
   
-  # @@protoc_insertion_point(class_scope:taggit_pb.VList)
+  # @@protoc_insertion_point(class_scope:taggit_pb.Paper)
+
+class UserTagItem(message.Message):
+  __metaclass__ = reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _USERTAGITEM
+  
+  # @@protoc_insertion_point(class_scope:taggit_pb.UserTagItem)
+
+class VLists(message.Message):
+  __metaclass__ = reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _VLISTS
+  
+  # @@protoc_insertion_point(class_scope:taggit_pb.VLists)
 
 class JsonRequest(message.Message):
   __metaclass__ = reflection.GeneratedProtocolMessageType
@@ -514,4 +436,6 @@ class JsonResponse(message.Message):
   
   # @@protoc_insertion_point(class_scope:taggit_pb.JsonResponse)
 
+_PAPER.extensions_by_name['paper'].message_type = _PAPER
+Item.RegisterExtension(_PAPER.extensions_by_name['paper'])
 # @@protoc_insertion_point(module_scope)

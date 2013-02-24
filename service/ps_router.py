@@ -32,7 +32,7 @@ class RouterApp:
         return err(environ, start_response)
 
     def add_route(self, pat, mid, han):
-        if mid not in self.__routing_table: # SINGELTON
+        if mid not in self.__routing_table: # middleware being SINGELTON
             self.__routing_table[mid] = \
                 middleware_factory(mid,self.mode); 
         self.map.connect(pat,middleware=mid,handler=han)

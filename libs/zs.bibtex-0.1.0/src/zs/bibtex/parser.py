@@ -51,7 +51,7 @@ def parse_entry(source, loc, tokens):
 
     new_entry['_type'] = type_
 
-    print 'extract bibtex from source:', loc
+    #print 'extract bibtex from source:', loc
     counter = 0
     start = 0
     valid = False
@@ -66,7 +66,7 @@ def parse_entry(source, loc, tokens):
         elif source[pos] == '@':
             start = pos
     new_entry['__bibtex'] = source[start:pos+1]
-    print 'parse entry bibtex:', new_entry['__bibtex'], '\n'
+    #print 'parse entry bibtex:', new_entry['__bibtex'], '\n'
 
     return new_entry
 
